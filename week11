@@ -1,0 +1,21 @@
+library(ggrepel)
+
+#load the data
+foot <- read_csv("C:/Users/00015/Desktop/tidytuesday/week11/week11.csv") %>% 
+  clean_names() %>%
+  select(-x1)
+
+foot
+View(foot)
+
+
+ggplot(foot, aes(x = log10(gdp_weighted_share), 
+                 y = log10(tv_audience_share)))+
+  geom_jitter(width = 0.05,
+              height =  0.05,
+              aes(size = population_share,
+                 colour = confederation)) +
+  geom_text_repel(data = subset(foot, gdp_weighted_share > 3),
+                  mapping = aes(label=country))
+  
+

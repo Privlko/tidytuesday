@@ -1,0 +1,99 @@
+# Week 14 - life expectancy
+library("ggplot2")
+library("reshape2")
+library("dplyr")
+library("extrafont")
+library("maps")
+
+
+
+
+# Read data
+life = read.csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/week14_global_life_expectancy.csv")
+
+(life <- as_tibble(life))
+
+life <- subset(life, year > 1999, !is.na(year))
+View(life)
+
+# Get world map
+map.world <- map_data(map="world")
+View(map.world)
+
+
+p <- ggplot(data = map.world,
+            mapping = aes(x = long, y = lat,
+                          group=group)) + 
+  geom_polygon(fill = "white", color = "black")
+
+p
+
+countries = as.character(life$country)[!is.na(life$life_expectancy)]
+countries <- as_tibble(countries)
+View(countries) 
+
+countries[!countries %in% map.world$region]
+
+View(map.world)
+
+# Join life exp data with map data
+map.world = left_join(map.world, life, by = c('region' = 'country'))
+View(map.world)
+
+p <- ggplot(data = map.world,
+            mapping = aes(x = long, y = lat,
+                          group=group)) + 
+  geom_polygon(fill=map.world$life_expectancy, color = "black")
+
+p
+
+# Select Europe
+europe = c("Albania", "Finland", "Andorra", "Austria", 
+           "Belgium",  "Bulgaria", "Bosnia and Herzegovina", 
+           "Belarus", "Switzerland", "Czech Republic", "Cyprus", 
+           "Germany", "Denmark", "Canary Islands", "Spain", "Estonia", 
+           "France", "UK", "Greece", "Croatia", "Hungary", 
+           "Ireland", "Iceland", "Italy", "San Marino", "Kosovo", 
+           "Liechtenstein", "Lithuania", "Luxembourg", "Latvia", 
+           "Monaco", "Moldova", "Macedonia", "Malta", "Montenegro", 
+           "Netherlands", "Norway", "Poland", "Portugal", "Romania", 
+           "Russia", "Serbia", "Slovakia", "Slovenia", "Sweden",   
+           "Turkey", "Ukraine", "Vatican")
+map.europe = map.world[map.world$region %in% europe,]
+View(map.europe)
+
+# Plot - Map of Europe with life exp
+preferred_europe_plot = ggplot() +
+  geom_polygon(data = map.europe, aes(x = long, y = lat, group = group, fill = life_expectancy), color="white", size=1) +
+  xlim(c(-26,42)) +
+  ylim(c(34,75)) 
+
+print(preferred_europe_plot)
+
+##try to space it out over time
+
+p0 <- ggplot(data = map.europe,
+             mapping = aes(x = long, y = lat,
+                           group = group,
+                           fill = life_expectancy))
+
+
+p1 <- p0 + geom_polygon(color = "gray90", size = 0.05) +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45)+
+  xlim(c(-26,60)) +
+  ylim(c(34,75)) 
+
+p1
+p2 <- p1 + scale_fill_viridis(option = "plasma")
+
+p2  + facet_wrap(~ year, ncol = 3) +
+  theme(legend.position = "bottom",
+        strip.background = element_blank()) +
+  labs(fill = "Life Expectancy",
+       title = "Life Expectancy in Europe, 2000-2014") +
+  theme_minimal()
+
+
+
+ggsave("123.jpg",
+       height = 10, width = 7, units = "in")

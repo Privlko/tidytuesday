@@ -1,0 +1,127 @@
+
+# packages ----------------------------------------------------------------
+
+
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+library(survival)
+library(survminer)
+library(forcats)
+
+getwd()
+
+
+# load the data -----------------------------------------------------------
+
+
+tt18 <- "https://github.com/rfordatascience/tidytuesday/blob/master/data/week18_dallas_animals.xlsx"
+tt18
+download.file(tt18, "week18_dallas_animals.xlsx")
+
+shltr <- read.csv("C:/Users/00015/Desktop/tidytuesday/week18/week18_dallas_animals.csv")
+
+shltr <- as.tibble(shltr)
+
+shltr
+
+shltr$intake_type
+shltr$outcome_type
+shltr$outcome_date
+shltr$intake_date
+
+
+
+# tidy & parse ------------------------------------------------------------
+
+
+shltr$intake_date <- parse_date(shltr$intake_date, "%d/%m/%Y")
+
+shltr$intake_date
+
+shltr$outcome_date <- parse_date(shltr$outcome_date, "%d/%m/%Y")
+shltr$outcome_date
+
+
+shltr <- shltr %>% 
+  mutate(dur = outcome_date - intake_date)
+
+
+  factor(shltr$outcome_type)
+
+  shltr %>% 
+  count(outcome_type)
+
+  shltr %>% 
+    count(animal_type)
+  
+shltr <- shltr %>% 
+  mutate(animal_ = fct_recode(animal_type,
+                              "Other" = "BIRD" ,
+                              "Cat" = "CAT",
+                              "Dog" = "DOG",
+                              "Other" = "LIVESTOCK",
+                              "Other" = "WILDLIFE"))
+
+shltr$animal_
+
+shltr %>% 
+  count(animal_)
+
+shltr <- shltr %>% 
+  mutate(outcome = fct_recode(outcome_type,
+                              "Left" = "ADOPTION" ,
+                              "Died" = "DEAD ON ARRIVAL",
+                              "Died" = "DIED",
+                              "Died" = "EUTHANIZED",
+                              "Left" = "FOSTER",
+                              "Left" = "FOUND REPORT",
+                              "Other" = "LOST REPORT",
+                              "Other" = "MISSING",
+                              "Other" = "OTHER",
+                              "Left" = "RETURNED TO OWNER",
+                              "Left" = "TRANSFER",
+                              "Left" = "WILDLIFE"
+                              ))
+
+shltr %>% 
+  count(outcome)
+
+
+# fit ---------------------------------------------------------------------
+
+
+q <- ggplot(shltr,
+            aes(y=..count../sum(..count..),
+                x=outcome,
+                fill=outcome)) +
+  geom_bar(position = "dodge")+
+  facet_wrap(~animal_)
+q
+
+
+# pretty it up a bit ------------------------------------------------------
+
+
+my_title <- "Most Animals Who Enter a Shelter, Leave"
+my_subtitle <- "Chart lists shelter outcomes for Cats, Dogs, and Other Animals. \nMost animals who enter a shelter are either adopted or claimed by their owner"
+my_caption <- "Source:  Dallas Animal Shelter \nPlot: @privlko"
+
+q +  scale_y_continuous(labels=scales::percent) 
++
+  labs(title= my_title,
+       subtitle= my_subtitle,
+       caption=my_caption,
+       x = "Average exercise",
+       y = "") +
+  theme_minimal()+
+  theme(legend.title = element_blank(),
+        plot.title = element_text(size = 14, margin = margin(b = 5)),
+        plot.subtitle = element_text(size = 10, color = "darkslategrey", margin = margin(b = 2)),
+        plot.caption = element_text(size = 8, margin = margin(t = 4), color = "grey70", hjust = 0),
+        axis.title.y = element_text(size = 8, margin = margin(t = 4), color = "darkslategrey", hjust = 0),
+        axis.title.x = element_text(size = 8, margin = margin(t = 4), color = "darkslategrey", hjust = 0),
+        axis.text.y = element_text(margin = margin(t = 6), color = "darkslategrey", hjust = 1,
+                                   lineheight = 6))
+
+ggsave("week16.jpg")

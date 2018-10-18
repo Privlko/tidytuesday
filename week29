@@ -1,0 +1,78 @@
+##tidy tuesday week 29
+library(broom)
+library(dplyr)
+library(modelr)
+library(tidyverse)
+
+
+
+# load the data -----------------------------------------------------------
+
+w29<- read.csv('C:/Users/00015/Desktop/tidytuesday/week29/week29.csv')
+
+
+w29<- tbl_df(w29) 
+
+ggplot(w29, aes(x=ShareWomen, y=Median))+
+  geom_point() +
+  scale_y_log10('Log median earnings',
+                limits= c(20000, 130000),
+                breaks= c(20000, 50000, 
+                          100000),
+                labels= c('$25,000', '$50,000', 
+                         '$100,000'))+
+  scale_x_continuous('Share of women within major',
+                     limits = c(0, 1),
+                     breaks = c(0,0.5,1)) +
+  geom_abline(intercept = exp(10.9335),
+              slope = -0.7054)
+
+
+# estimate a model --------------------------------------------------------
+
+
+m1<- lm(log(Median) ~ ShareWomen, data=w29)
+summary(m1)
+
+
+# pull out the details ----------------------------------------------------
+
+
+grid <- w29 %>% 
+  data_grid(ShareWomen) %>% 
+  add_predictions(m1)
+
+
+grid
+
+
+# plot the relationship ---------------------------------------------------
+
+
+p <- ggplot(w29, aes(x=ShareWomen, y=log(Median)))+
+  geom_point() +
+  geom_line(aes(y=pred), 
+            data=grid,
+            colour = 'red',
+            size=2,
+            alpha=0.3)+
+  scale_x_continuous('Share of women within major',
+                     limits = c(0, 1),
+                     breaks = c(0,0.5,1)) +
+  scale_y_continuous('Log median earnings',
+                     limits = c(9.9, 11.6),
+                     breaks = c(log(20000), 
+                                log(40000), log(60000),
+                                log(80000), log(100000)),
+                     labels = c('$20,000', '$40,000',
+                                '$60,000', '$80,000', '$100,000'))
+
+
+
+# nice labels -------------------------------------------------------------
+
+p+ labs(title='Median earnings decline as share of women in a given major increases',
+        subtitle='Traditionally feminine majors may be undervalued. Majors where women are prone to work receive lower median wages.',
+        caption='Data: American Community Survey 2010-2012 \nPlot: @privlko')
+
+

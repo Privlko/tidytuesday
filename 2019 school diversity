@@ -1,0 +1,70 @@
+library(tidyverse)
+library(ggplot2)
+library(maps)
+
+
+df <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-24/school_diversity.csv')
+
+
+df
+# Hex color codes for Dem Blue and Rep Red
+
+
+
+us_states <- map_data("state")
+
+us_states
+
+head(us_states)
+
+dim(us_states)
+
+
+
+p <- ggplot(data = us_states,
+            mapping = aes(x = long, y = lat,
+                          group = group, fill=region))
+
+p + geom_polygon(fill = "white", 
+                 color = "black")
+
+
+p + geom_polygon(color = "gray90", size = 0.1) + 
+    guides(fill = FALSE) +
+    coord_map(projection = 'albers', lat0=39, lat1=45)
+
+df_state <- df %>% 
+  group_by(ST) %>% 
+  count(diverse) %>% 
+  mutate(perc = n/sum(n)) %>% 
+  filter(diverse=='Extremely undiverse')
+
+
+df_state
+df_state$state <- tolower(setNames(state.name, state.abb)[df_state$ST])
+
+
+df_state
+
+us_states$state <- us_states$region
+us_states
+
+us_df <- left_join(us_states, df_state, by= 'state')
+
+us_df
+
+p <- ggplot(data = us_df,
+            aes(x = long, y = lat,
+                group = group, fill = perc))
+
+
+
+p + geom_polygon(color = "gray90", size = 0.1) +
+  coord_map(projection = 'albers', lat0=39, lat1=45) +
+  labs(title = 'US States by School Diversity', fill='Percent of schools \nextremely lacking \ndiversity ')+
+  theme_map()
+
+
+
+
+

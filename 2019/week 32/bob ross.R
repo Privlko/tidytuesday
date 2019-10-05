@@ -1,4 +1,5 @@
 library(tidyverse)
+library(ggraph)
 
 theme_set(theme_light())
 
@@ -96,6 +97,8 @@ library(widyr)
 correlations <- bob %>% 
 pairwise_cor(element, episode, sort=T)
 
+correlations
+
 
 correlations %>% 
   filter(item1=='River') %>% 
@@ -108,5 +111,14 @@ correlations %>%
 
 correlations %>% 
   head(100)
+
 library(ggraph)
-install.packages('ggraph')
+library(igraph)
+
+
+correlations %>% 
+  head(100) %>% 
+  graph_from_data_frame() %>% 
+  ggraph()+
+  geom_edge_link()+
+  geom_node_point()

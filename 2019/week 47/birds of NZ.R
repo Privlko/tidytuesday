@@ -79,7 +79,7 @@ nz_bird %>%
        y="Portion of total vote",
        caption= "Source: New Zealand's Bird of the Year Dataset. \nPlot: @privlko",
        title= "The Yellow-Eyed Penguin gradually received a greater share of votes over time",
-       subtitle="As the competition drew to a close, the penguin managed to increase the share of available first preference votes. The penguin wasn't able to increase \nthe share of other votes") 
+       subtitle="As the competition drew to a close, the penguin managed to increase the share of available first preference votes. \nThe penguin wasn't able to increase the share of other votes") 
 
 
          

@@ -93,9 +93,3 @@ ggsave('C:/Users/Ivan/Desktop/R projects/#tidytuesday/tidytuesday/2019/week 40/p
 
 pizza_datafiniti
 
-
-pizza_barstool %>% 
-  count(country)
-
-pizza_barstool %>% 
-  left_join(pizza_datafiniti)

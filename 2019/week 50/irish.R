@@ -57,3 +57,5 @@ ggplot(t1, aes(fct_reorder(factor(County.and.City), value), value)) +
        caption="Data: Ireland's Central Statistics Office, Census Data \n Plot: @privlko")
 ggsave("C:/Users/Ivan.Privalko/Desktop/R projects/tidytuesday/2019/week 50/irish.jpg")
 
+
+map_data

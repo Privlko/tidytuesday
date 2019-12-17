@@ -1,4 +1,5 @@
 library(tidyverse)
+library(viridis)
 library(CSO)
 
 
@@ -57,3 +58,25 @@ ggplot(t1, aes(fct_reorder(factor(County.and.City), value), value)) +
        caption="Data: Ireland's Central Statistics Office, Census Data \n Plot: @privlko")
 ggsave("C:/Users/Ivan.Privalko/Desktop/R projects/tidytuesday/2019/week 50/irish.jpg")
 
+
+
+irish_speakers <- get_cso("EA040") %>% 
+  filter(Census.Year=="2016") %>% 
+  filter(Statistic == "Irish speakers as a percentage of total (%)") %>% 
+  filter(Sex == "Both sexes") 
+
+
+irish_speakers
+
+map_data <- full_join(irish_speakers, 
+                      admin_counties , 
+                      by="County.and.City" ) 
+
+map_data
+ggplot(map_data, aes(long, 
+                     lat, 
+                     group = group, 
+                     fill = value)) + 
+  scale_fill_viridis()+
+  geom_polygon() + 
+  coord_quickmap() 

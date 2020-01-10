@@ -116,12 +116,14 @@ df <- df2 %>%
     geom_line(size=2,
               aes(group=factor(year), col=factor(year)))+
     facet_wrap(~city_name)+
-    theme(axis.text.x = element_text(angle = 70))+
+    theme(axis.text.x = element_text(angle = 90))+
     labs(title = "Australian temperatures have changed since 1915, with winters becoming warmer",
-         subtitle = "Comparing average max temperature by month for 1915, and 2015 shows that winters were warmer on average in 2015 \nThis is especially true in Canberra, Kent, and Melbourne.",
+         subtitle = "Comparing average max temperature by month for 1915, and 2015 shows that winters \nwere warmer on average in 2015. \nThis is especially true in Canberra, Kent, and Melbourne.",
          x="",
+         colour="Year",
          y="Average temperature in a given month (Celsius)",
-         caption= "Data: Bureau of Meteorology \nPlot: @privlko")
+         caption= "Data: Bureau of Meteorology \nPlot: @privlko") +
+    theme(plot.caption = element_text(color = "gray55", size = 10))
   
   
   ggsave("C:/Users/Ivan.Privalko/Desktop/R projects/tidytuesday/2020/week 1/australia.jpg")

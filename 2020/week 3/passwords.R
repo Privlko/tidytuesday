@@ -8,10 +8,6 @@ library(twitteR)
 
 # twitter bit -------------------------------------------------------------
 
-setup_twitter_oauth(consumer_key = "6WbAEcYk6EVfr9fyZ2BRApB4B",
-                    access_token = "899733659032449030-ek4Ja11pllrBN7JnmEx1AI7jUFhrUen",
-                    consumer_secret = "DIRKpJRPa0MUTNyNCrmlFGVScihGfefcJACeMHXJcPAjterb4A",
-                    access_secret = "JqvOvIM8aKAdaQNJcpbF0Sfq7He8jHrpm7V3zGvacMYjb" )
 
 
 passwords <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-01-14/passwords.csv')

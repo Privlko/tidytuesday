@@ -14,10 +14,6 @@ p3 <- plant$actions
 
 
 
-# Calculate the frequency of threats by country ---------------------------
-
-
-
 
 
 

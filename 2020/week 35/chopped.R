@@ -41,7 +41,26 @@ here()
 ggsave(here("2020", "week 35", "chopped.png"))
 
 
+rect <- data.frame(xmin=5.5, xmax=7.5, ymin=8, ymax=9)
 
+p1 <- chopped %>% 
+  filter(!is.na(episode_rating)) %>%
+  ggplot(aes(x=season,
+             y=episode_rating))+
+  stat_summary(fun = mean, geom = "point") + 
+  stat_summary(fun.data = mean_se, 
+               geom = "errorbar",
+               fun.args = list(mult = 2))+
+  scale_y_continuous(limits = c(5, 10))+
+  theme(legend.position = "none") +
+  geom_rect(data=rect,
+            aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),
+            color="grey20",
+            alpha=0.5,
+            inherit.aes = FALSE)
+
+
+  
 
 
 sum1 <- chopped %>%
@@ -52,12 +71,23 @@ sum1 <- chopped %>%
             n = n(),
             se_rating = sd_rating/sqrt(n)) 
 
-sum1 %>% 
-  ggplot(aes(x=factor(season), 
+p2 <- sum1 %>% 
+  ggplot(aes(x=season, 
              y= mean_rating))+
   geom_point()+
   geom_errorbar(aes(ymin=mean_rating-(se_rating*1.96),
                     ymax=mean_rating+(se_rating*1.96)))+
-  scale_y_continuous(limits = c(0, 10))+
-  theme_bw()
+  scale_y_continuous(limits = c(5, 10))+
+  geom_rect(data=rect,
+            aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),
+            color="grey20",
+            alpha=0.5,
+            inherit.aes = FALSE)
 
+
+p3 <- p1/p2
+
+
+p3
+
+ggsave(here("2020", "week 35", "SE plot.png"))
